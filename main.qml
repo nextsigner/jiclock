@@ -2,7 +2,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtWebEngine 1.4
 import QtQuick.Window 2.2
-import "qrc:/"
+
 ApplicationWindow {
     id: app
     visible: true
