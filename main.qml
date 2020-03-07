@@ -1,7 +1,5 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
-import QtWebEngine 1.4
-import QtQuick.Window 2.2
 
 ApplicationWindow {
     id: app
@@ -14,15 +12,10 @@ ApplicationWindow {
     property color c2: 'white'
     property color c3: 'gray'
     property color c4: 'red'
-    property string uHtml: ''
-    property bool voiceEnabled: true
-    property string user: ''
-    property string url: ''
     FontLoader{name: "FontAwesome"; source: "qrc:/fontawesome-webfont.ttf"}
     USettings{
         id: unikSettings
-        url:'./jiclock'
-        //url:pws+'/'+app.moduleName
+        url:pws+'/jiclock'
     }
     Item{
         id: xApp
@@ -54,11 +47,7 @@ ApplicationWindow {
                 color: 'yellow'
                 anchors.horizontalCenter: parent.horizontalCenter
             }
-        }
-        /*Rectangle{
-            anchors.fill: parent
-
-        }*/
+        }     
         MouseArea{
             anchors.fill: parent
             onClicked: tCheck.running=!tCheck.running
@@ -94,8 +83,6 @@ ApplicationWindow {
     Shortcut{
         sequence: 'Esc'
         onActivated: Qt.quit()
-    }
-    Component.onCompleted: {
-    }
+    }    
 }
 
