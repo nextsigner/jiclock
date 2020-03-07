@@ -21,7 +21,8 @@ ApplicationWindow {
     FontLoader{name: "FontAwesome"; source: "qrc:/fontawesome-webfont.ttf"}
     USettings{
         id: unikSettings
-        url:pws+'/'+app.moduleName
+        url:'./jiclock'
+        //url:pws+'/'+app.moduleName
     }
     Item{
         id: xApp
