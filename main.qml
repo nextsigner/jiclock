@@ -15,7 +15,7 @@ ApplicationWindow {
     FontLoader{name: "FontAwesome"; source: "qrc:/fontawesome-webfont.ttf"}
     USettings{
         id: unikSettings
-        url:pws+'/jiclock'
+        url:'./jiclock'
     }
     Item{
         id: xApp
@@ -52,7 +52,7 @@ ApplicationWindow {
             anchors.fill: parent
             onClicked: tCheck.running=!tCheck.running
             onDoubleClicked: {
-                let d = new Date(Date.now())
+                var d = new Date(Date.now())
                 let h = d.getHours()
                 let m = d.getMinutes()
                 unik.speak('Es la hora : '+h+'  '+m+' minutos.')
@@ -68,7 +68,7 @@ ApplicationWindow {
         interval: 1000*35
         property var arrayHoras: ['17:30','17:50', '18:0', '18:30', '19:0', '19:30', '19:45', '19:55', '20:0', '20:15']
         onTriggered: {
-                let d = new Date(Date.now())
+                var d = new Date(Date.now())
                 let h = d.getHours()
                 let m = d.getMinutes()
                 let string = ''+h+':'+m
