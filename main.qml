@@ -49,7 +49,22 @@ ApplicationWindow {
             Item{
                 width: 1
                 height: app.fs*3
-            }            
+            }
+            Row{
+                spacing: app.fs
+                Text {
+                    id: labelTit3
+                    text: 'Archivo actual: '+xListTimes.cFileName.replace('.json', '')
+                    font.pixelSize: app.fs
+                    color: app.c2
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                BotonUX{
+                    text: 'Editar'
+                    onClicked: xListTimes.visible=true
+                }
+            }
+            Item{width: 1; height: app.fs*2}
             Grid{
                 spacing: app.fs
                 columns: 2
@@ -61,7 +76,8 @@ ApplicationWindow {
                     text: !tCheck.running?'Iniciar':'Detener'
                     animationEnabled: true
                     onClicked: {
-                            tCheck.running=!tCheck.running
+                        tCheck.arrayHoras = xListTimes.getHoras()
+                        tCheck.running=!tCheck.running
                     }
                 }
                 UxBotCirc{
@@ -79,7 +95,7 @@ ApplicationWindow {
                 }
             }
         }
-        XListTimes{id: xListTimes}
+        XListTimes{id: xListTimes; visible: false}
         UxBotCirc{
             opacity: labelTit.opacity
             width: app.fs*3
@@ -111,13 +127,13 @@ ApplicationWindow {
             }
         }
         onTriggered: {
-                var d = new Date(Date.now())
-                let h = d.getHours()
-                let m = d.getMinutes()
-                let string = ''+h+':'+m
-                if(arrayHoras.indexOf(string)>=0){
-                    unik.speak('Es la hora : '+h+'  '+m+' minutos.')
-                }
+            var d = new Date(Date.now())
+            let h = d.getHours()
+            let m = d.getMinutes()
+            let string = ''+h+':'+m
+            if(arrayHoras.indexOf(string)>=0){
+                unik.speak('Es la hora : '+h+'  '+m+' minutos.')
+            }
         }
     }
     Shortcut{
@@ -125,12 +141,12 @@ ApplicationWindow {
         onActivated: Qt.quit()
     }
     Component.onCompleted: {
-         let h = ['17:30','17:50', '18:0', '18:30', '19:0', '19:30', '19:45', '19:55', '20:0', '20:15']
+        let h = ['17:30','17:50', '18:0', '18:30', '19:0', '19:30', '19:45', '19:55', '20:0', '20:15']
         let a = ['Comienzo 1 ñalsk fdñlskf ñaslk jas dsf sdf ñjsdf jñsdfñ sdkl sdflñk dsfjsfdañlsdñlk sdflksfda ñsfdañlsdfsdfñ sdfklsfdañlsdafkjsñlsdjkñlsdaksñ  asñ dsf jkldsfñlsdfjñlsdalk sñl kñ sdfa sda sdf jklfdsñ sdf ñsdfklj ñsdflk','Comienzo 2', 'Comienzo 3', 'Comienzo 4', 'Comienzo 5']
-         xListTimes.addItem(h[0], a[0], true)
-         xListTimes.addItem(h[0], a[0], false)
-         xListTimes.addItem(h[0], a[0], true)
-         xListTimes.addItem(h[0], a[0], false)
+        xListTimes.addItem(h[0], a[0], true)
+        xListTimes.addItem(h[0], a[0], false)
+        xListTimes.addItem(h[0], a[0], true)
+        xListTimes.addItem(h[0], a[0], false)
     }
 }
 

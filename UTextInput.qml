@@ -4,12 +4,12 @@ Item{
     id:r
     width: parent.width
     height: app.fs*2
+    property alias text:tiData.text
     property alias focusTextInput:tiData.focus
     property string label: 'Input: '
     property color fontColor: app.c2
     property int customHeight: -1
     signal seted(string text)
-    signal textChanged(string text)
     Row{
         spacing: app.fs*0.5
         Text{

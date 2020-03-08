@@ -15,6 +15,11 @@ Rectangle {
         width: parent.width
         height: parent.height
         Item{width: 1; height: app.fs*0.5}
+        BotonUX{
+            text: 'Atras'
+            onClicked: xListTimes.visible=false
+            height: app.fs*2
+        }
         Item{
             id: xSetFile
             width: r.width
@@ -38,22 +43,30 @@ Rectangle {
                     parent.editing=false
                 }
             }
-            Rectangle{
+            Item{
                 width: tiFileName.width
                 height: parent.height
                 anchors.horizontalCenter: parent.horizontalCenter
                 visible: !parent.editing
-                Text {
-                    id: labelCurrentFileName
-                    text: '<b>Archivo: </b> '+r.cFileName.replace('.json', '')
-                    font.pixelSize: app.fs
-                    color: app.c1
-                    anchors.verticalCenter: parent.verticalCenter
+                Row{
+                    spacing: app.fs
+                    Text {
+                        id: labelCurrentFileName
+                        text: '<b>Archivo: </b> '+r.cFileName.replace('.json', '')
+                        font.pixelSize: app.fs
+                        color: app.c2
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                    BotonUX{
+                        text: 'Cambiar'
+                        onClicked: xSetFile.editing=true
+                        height: app.fs*2
+                    }
                 }
-                MouseArea{
+                /*MouseArea{
                     anchors.fill: parent
                     onClicked: parent.parent.editing=true
-                }
+                }*/
             }
         }
         Rectangle{
@@ -122,6 +135,17 @@ Rectangle {
                     }
                 }
             }
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    xEditItem.currentIndex=index
+                    let d0=txtHora.text.split(' ')
+                    xEditItem.h=d0[1].split(':')[0]
+                    xEditItem.m=d0[1].split(':')[1]
+                    xEditItem.a=txtAsunto.text.replace('<b>Asunto:</b> ', '')
+                    xEditItem.visible=true
+                }
+            }
         }
     }
     UxBotCirc{
@@ -134,11 +158,31 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: app.fs*0.5
         onClicked: {
-
+                lm.append(lm.addItem('00:0', '', false))
+                xEditItem.currentIndex=lm.count-1
+                xEditItem.visible=true
         }
     }
     XEditItem{
         id: xEditItem
+        visible: false
+        onEditFinished: {
+            lm.get(index).hora=h+':'+m
+            lm.get(index).asunto=a
+            lm.get(index).habilitado=true
+            let json='{\n"items":[\n'
+            for(var i=0;i<lm.count; i++){
+                if(i!==0)json+=','
+                json+='{"item":{'
+                json+='"hora":"'+lm.get(i).hora+'",'
+                json+='"asunto":"'+lm.get(i).asunto+'",'
+                json+='"habilitado":'+lm.get(i).habilitado+''
+                json+='}}\n'
+            }
+            json+=']\n}'
+            unik.setFile(r.cFileName, json)
+            //uLogView.showLog(json)
+        }
     }
     Component.onCompleted: {
         let fileName='uFileName'
@@ -151,9 +195,16 @@ Rectangle {
     function addItem(hora, asunto, habilitado){
         lm.append(lm.addItem(hora, asunto, habilitado))
     }
+    function getHoras(){
+        let a = []
+        for(var i=0;i<lm.count; i++){
+            a.push(lm.get(i).hora)
+        }
+        return a
+    }
     function loadFile(fileName){
-       let json = JSON.parse(unik.getFile(fileName))
-       lm.clear()
+        let json = JSON.parse(unik.getFile(fileName))
+        lm.clear()
         if(Object.keys(json).length===0)return
         for(var i=0;i<Object.keys(json['items']).length;i++){
             //uLogView.showLog(json['items'][i]['item'].hora)
