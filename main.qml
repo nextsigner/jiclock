@@ -1,13 +1,14 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
+import QtQuick.Window 2.0
 
 ApplicationWindow {
     id: app
     visible: true
-    visibility: Qt.platform.os==='android'?"FullScreen":"Maximized"
+    visibility: Qt.platform.os==='android'?"FullScreen":"Windowed"
     color: app.c1
     property string moduleName: 'jiclock'
-    property int fs: 20
+    property int fs: Screen.width*0.04
     property color c1: 'black'
     property color c2: 'white'
     property color c3: 'gray'
@@ -52,17 +53,13 @@ ApplicationWindow {
                 width: 1
                 height: app.fs*3
             }
+            XClock{
+                id: xClock
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
             Item{
                 width: 1
-                height: labelTime.contentHeight
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.horizontalCenterOffset: 0-app.fs*8
-                Text {
-                    id: labelTime
-                    text: '00:00:00.000'
-                    font.pixelSize: app.fs*2
-                    color: app.c2
-                }
+                height: app.fs*3
             }
             Row{
                 spacing: app.fs
@@ -129,6 +126,7 @@ ApplicationWindow {
         UxBotCirc{
             opacity: labelTit.opacity
             width: app.fs*3
+            //height: width
             tag: 'config'
             animationEnabled: true
             anchors.right: parent.right
@@ -157,8 +155,8 @@ ApplicationWindow {
             let m = d.getMinutes()
             let s = d.getSeconds()
             let ms = d.getMilliseconds()
-            let t = ''+h+':'+m+':'+s+'.'+ms
-            labelTime.text=t
+            let t = [h,m,s, ms]//ms
+            xClock.model=t
         }
     }
     Timer{
@@ -236,6 +234,15 @@ ApplicationWindow {
     Shortcut{
         sequence: 'Esc'
         onActivated: Qt.quit()
+    }
+    Component.onCompleted: {
+        if(Qt.platform.os!=='android'){
+            app.width=300
+            app.height=600
+            app.x=50
+            app.y=50
+            app.fs=app.width*0.04
+        }
     }
     function start(){
         tCheck.arrayHoras = xListTimes.getHoras()
