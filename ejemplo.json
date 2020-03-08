@@ -1,8 +1,8 @@
 {
 "items":[
-{"item":{"hora":"16:4","asunto":"Merendar","habilitado":true}}
-,{"item":{"hora":"18:4","asunto":"Correr","habilitado":true}}
-,{"item":{"hora":"19:4","asunto":"Salir","habilitado":false}}
-,{"item":{"hora":"23:4","asunto":"Cenar 4","habilitado":true}}
+{"item":{"hora":"6:0","asunto":"Despertarse para desayunar","cada":"30","veces":"3","habilitado":true}}
+,{"item":{"hora":"7:15","asunto":"Hay que salir a correr por el parque hasta las 9:30 horas.","cada":"10","veces":"1","habilitado":true}}
+,{"item":{"hora":"12:30","asunto":"Preparar el amuerzo","cada":"30","veces":"3","habilitado":false}}
+,{"item":{"hora":"15:0","asunto":"Meditar","cada":"60","veces":"3","habilitado":true}}
 ]
 }

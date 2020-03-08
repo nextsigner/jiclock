@@ -1,8 +1,8 @@
 {
-    "items":[
-        {"item":{"hora":"16:4", "asunto": "Merendar", "habilitado": true}},
-        {"item":{"hora":"18:4", "asunto": "Correr", "habilitado": true}},
-        {"item":{"hora":"19:4", "asunto": "Salir", "habilitado": false}},
-        {"item":{"hora":"23:4", "asunto": "Cenar", "habilitado": true}}
-    ]
+"items":[
+{"item":{"hora":"6:4","asunto":"Desayunar", "cada": 5, "veces": 2, "habilitado":true}}
+,{"item":{"hora":"5:6","asunto":"Hay que salir a correr por el parque hasta las 6:30 horas.", "cada": 5, "veces": 2, "habilitado":true}}
+,{"item":{"hora":"19:4","asunto":"Salir", "cada": 5, "veces": 2,"habilitado":false}}
+,{"item":{"hora":"23:4","asunto":"Cenar 4", "cada": 5, "veces": 2,"habilitado":true}}
+]
 }

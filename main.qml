@@ -13,6 +13,8 @@ ApplicationWindow {
     property color c3: 'gray'
     property color c4: 'red'
 
+    property string uMensaje: ''
+
     onClosing: {
         if(Qt.platform.os!=='android'){
             close.accepted = true
@@ -50,6 +52,18 @@ ApplicationWindow {
                 width: 1
                 height: app.fs*3
             }
+            Item{
+                width: 1
+                height: labelTime.contentHeight
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.horizontalCenterOffset: 0-app.fs*8
+                Text {
+                    id: labelTime
+                    text: '00:00:00.000'
+                    font.pixelSize: app.fs*2
+                    color: app.c2
+                }
+            }
             Row{
                 spacing: app.fs
                 Text {
@@ -70,19 +84,20 @@ ApplicationWindow {
                 columns: 2
                 anchors.horizontalCenter: parent.horizontalCenter
                 UxBotCirc{
-                    opacity: labelTit.opacity
-                    width: app.fs*8
+                    width: app.fs*4
                     fontSize: app.fs
                     text: !tCheck.running?'Iniciar':'Detener'
                     animationEnabled: true
                     onClicked: {
-                        tCheck.arrayHoras = xListTimes.getHoras()
-                        tCheck.running=!tCheck.running
+                        if(tCheck.running){
+                            tCheck.running=false
+                        }else{
+                            app.start()
+                        }
                     }
                 }
                 UxBotCirc{
-                    opacity: labelTit.opacity
-                    width: app.fs*8
+                    width: app.fs*4
                     fontSize: app.fs
                     text: 'Ahora'
                     animationEnabled: true
@@ -93,9 +108,24 @@ ApplicationWindow {
                         unik.speak('Es la hora : '+h+'  '+m+' minutos.')
                     }
                 }
+                UxBotCirc{
+                    width: app.fs*4
+                    fontSize: app.fs
+                    text: 'Repetir'
+                    animationEnabled: true
+                    onClicked: {
+                        unik.speak(app.uMensaje)
+                    }
+                }
             }
         }
-        XListTimes{id: xListTimes; visible: false}
+        XListTimes{
+            id: xListTimes;
+            visible: false
+            onVisibleChanged: {
+                if(!visible&&tCheck.running)app.start()
+            }
+        }
         UxBotCirc{
             opacity: labelTit.opacity
             width: app.fs*3
@@ -113,12 +143,35 @@ ApplicationWindow {
         ULogView{id: uLogView}
         UWarnings{id: uWarnings}
     }
+    Item{
+        id: xTimers
+    }
+    Timer{
+        id: tClock
+        running: true
+        repeat: true
+        interval: 10
+        onTriggered: {
+            let d = new Date(Date.now())
+            let h = d.getHours()
+            let m = d.getMinutes()
+            let s = d.getSeconds()
+            let ms = d.getMilliseconds()
+            let t = ''+h+':'+m+':'+s+'.'+ms
+            labelTime.text=t
+        }
+    }
     Timer{
         id:tCheck
         running: true
         repeat: true
-        interval: 1000*35
-        property var arrayHoras: ['17:30','17:50', '18:0', '18:30', '19:0', '19:30', '19:45', '19:55', '20:0', '20:15']
+        interval: 1000*15
+        property var arrayHoras: []
+        property var arrayCadas: []
+        property var arrayVeces: []
+        property var arrayAsuntos: []
+        property int numAvisos: 1
+        property int numMaxAvisos: 3
         onRunningChanged: {
             if(running){
                 unik.speak('Avisos activados.')
@@ -127,12 +180,56 @@ ApplicationWindow {
             }
         }
         onTriggered: {
+            tCheck.interval=1000*15
             var d = new Date(Date.now())
             let h = d.getHours()
             let m = d.getMinutes()
             let string = ''+h+':'+m
-            if(arrayHoras.indexOf(string)>=0){
-                unik.speak('Es la hora : '+h+'  '+m+' minutos.')
+            if(arrayHoras.indexOf(string)>=0&&numAvisos<numMaxAvisos){
+                let a = arrayAsuntos[arrayHoras.indexOf(string)]
+                let msg='Es la hora : '+h+'  '+m+' minutos.'
+                msg+=' '+a
+                let idName='t'+d.getTime()
+                var comp = Qt.createComponent("XTimer.qml")
+                let um='Último mensaje de la hora '+h+':'+m+' minutos: '+a
+                if(app.uMensaje!==um){
+                    var obj = comp.createObject(xTimers, {"msg":msg, "interval":parseInt(arrayCadas[arrayHoras.indexOf(string)] * 1000), "nma": parseInt(arrayVeces[arrayHoras.indexOf(string)]) })
+                }
+                app.uMensaje=um
+                /*let qmlCode='import QtQuick 2.0
+                Item{
+                    id: '+idName+'
+                    Timer{
+                        id: t'+idName+'
+                        running: true
+                        repeat: true
+                        interval: 5000
+                        property int numAvisos: 0
+                        property int numMaxAvisos: 3
+                        onTriggered:{
+                            numAvisos++
+                            uLogView.showLog("n:"+numAvisos+" nm:"+numMaxAvisos)
+                            if(numAvisos>=numMaxAvisos){
+                                    t'+idName+'.stop()
+                                    uLogView.showLog("Detenido!")
+                            }else{
+                                    unik.speak(\''+msg+'\')
+                            }
+                        }
+                    }
+                }'
+                let comp = Qt.createQmlObject(qmlCode, xTimers, 'xTimers2')*/
+                /*
+                unik.speak(msg)
+                */
+            }else{
+                //numAvisos=0
+                /*if(arrayHoras.indexOf(string)<0&&numAvisos>0){
+                     stop()
+                     tCheck.interval=100
+                     numAvisos=0
+                     tCheck.restart()
+                 }*/
             }
         }
     }
@@ -140,13 +237,12 @@ ApplicationWindow {
         sequence: 'Esc'
         onActivated: Qt.quit()
     }
-    Component.onCompleted: {
-        let h = ['17:30','17:50', '18:0', '18:30', '19:0', '19:30', '19:45', '19:55', '20:0', '20:15']
-        let a = ['Comienzo 1 ñalsk fdñlskf ñaslk jas dsf sdf ñjsdf jñsdfñ sdkl sdflñk dsfjsfdañlsdñlk sdflksfda ñsfdañlsdfsdfñ sdfklsfdañlsdafkjsñlsdjkñlsdaksñ  asñ dsf jkldsfñlsdfjñlsdalk sñl kñ sdfa sda sdf jklfdsñ sdf ñsdfklj ñsdflk','Comienzo 2', 'Comienzo 3', 'Comienzo 4', 'Comienzo 5']
-        xListTimes.addItem(h[0], a[0], true)
-        xListTimes.addItem(h[0], a[0], false)
-        xListTimes.addItem(h[0], a[0], true)
-        xListTimes.addItem(h[0], a[0], false)
+    function start(){
+        tCheck.arrayHoras = xListTimes.getHoras()
+        tCheck.arrayCadas = xListTimes.getCadas()
+        tCheck.arrayVeces = xListTimes.getVeces()
+        tCheck.arrayAsuntos = xListTimes.getAsuntos()
+        tCheck.running=true
     }
 }
 

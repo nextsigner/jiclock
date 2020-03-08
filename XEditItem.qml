@@ -11,7 +11,9 @@ Rectangle {
     property alias h: ti1.text
     property alias m: ti2.text
     property alias a: ti3.text
-    signal editFinished(string h, string m, string a, int index)
+    property alias c: ti4.text
+    property alias v: ti5.text
+    signal editFinished(string h, string m, string c, string v, string a, int index)
     Column{
         id: col
         spacing: app.fs
@@ -34,6 +36,31 @@ Rectangle {
                 width: app.fs*6
             }
         }
+        Row{
+            spacing: app.fs
+            UText{
+                text: 'Avisar'
+                anchors.verticalCenter: parent.verticalCenter
+            }
+            UTextInput{
+                id: ti5
+                label: ''
+                width: app.fs*3
+            }
+            UText{
+                text: 'veces cada '
+                anchors.verticalCenter: parent.verticalCenter
+            }
+            UTextInput{
+                id: ti4
+                label: ''
+                width: app.fs*3
+            }
+            UText{
+                text: 'segundos'
+                anchors.verticalCenter: parent.verticalCenter
+            }
+        }
         UTextInput{
             id: ti3
             label: 'Asunto:'
@@ -52,7 +79,7 @@ Rectangle {
             BotonUX{
                 text: 'Listo'
                 onClicked: {
-                    editFinished(ti1.text, ti2.text, ti3.text, r.currentIndex)
+                    editFinished(ti1.text, ti2.text, ti4.text, ti5.text, ti3.text, r.currentIndex)
                     r.visible=false
                 }
             }

@@ -91,10 +91,12 @@ Rectangle {
     }
     ListModel{
         id: lm
-        function addItem(h, a, e){
+        function addItem(h, a, c, v, e){
             return {
                 hora: h,
                 asunto: a,
+                cada: c,
+                veces: v,
                 habilitado: e
             }
         }
@@ -122,7 +124,7 @@ Rectangle {
                 UText {
                     id: txtAsunto
                     text: '<b>Asunto:</b> '+asunto
-                    width: xItem.width-txtHora.contentWidth-app.fs*4
+                    width: xItem.width-txtHora.contentWidth-txtVecesCada.width-app.fs*8
                     wrapMode: Text.WordWrap
                     anchors.verticalCenter: parent.verticalCenter
                     Rectangle{
@@ -133,6 +135,21 @@ Rectangle {
                         anchors.leftMargin: 0-app.fs*2
                         anchors.verticalCenter: parent.verticalCenter
                     }
+                    Rectangle{
+                        width: xItem.border.width
+                        height: xItem.height
+                        color: xItem.border.color
+                        anchors.right: parent.right
+                        anchors.rightMargin: 0-app.fs*2
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                }
+                UText {
+                    id: txtVecesCada
+                    width: contentWidth
+                    text: ''+veces+' veces\ncada '+cada+' segundos'
+                    horizontalAlignment: Text.AlignHCenter
+                    anchors.verticalCenter: parent.verticalCenter
                 }
             }
             MouseArea{
@@ -143,6 +160,8 @@ Rectangle {
                     xEditItem.h=d0[1].split(':')[0]
                     xEditItem.m=d0[1].split(':')[1]
                     xEditItem.a=txtAsunto.text.replace('<b>Asunto:</b> ', '')
+                    xEditItem.c=cada
+                    xEditItem.v=veces
                     xEditItem.visible=true
                 }
             }
@@ -158,7 +177,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: app.fs*0.5
         onClicked: {
-                lm.append(lm.addItem('00:0', '', false))
+                lm.append(lm.addItem('00:0', '', 15, 3, false))
                 xEditItem.currentIndex=lm.count-1
                 xEditItem.visible=true
         }
@@ -169,6 +188,8 @@ Rectangle {
         onEditFinished: {
             lm.get(index).hora=h+':'+m
             lm.get(index).asunto=a
+            lm.get(index).cada=c
+            lm.get(index).veces=v
             lm.get(index).habilitado=true
             let json='{\n"items":[\n'
             for(var i=0;i<lm.count; i++){
@@ -176,6 +197,8 @@ Rectangle {
                 json+='{"item":{'
                 json+='"hora":"'+lm.get(i).hora+'",'
                 json+='"asunto":"'+lm.get(i).asunto+'",'
+                 json+='"cada":"'+lm.get(i).cada+'",'
+                 json+='"veces":"'+lm.get(i).veces+'",'
                 json+='"habilitado":'+lm.get(i).habilitado+''
                 json+='}}\n'
             }
@@ -192,13 +215,34 @@ Rectangle {
             r.cFileName=unik.getFile(fileName)
         }
     }
-    function addItem(hora, asunto, habilitado){
-        lm.append(lm.addItem(hora, asunto, habilitado))
+    function addItem(hora, asunto, cada, veces, habilitado){
+        lm.append(lm.addItem(hora, asunto, cada, veces, habilitado))
     }
     function getHoras(){
         let a = []
         for(var i=0;i<lm.count; i++){
             a.push(lm.get(i).hora)
+        }
+        return a
+    }
+    function getCadas(){
+        let a = []
+        for(var i=0;i<lm.count; i++){
+            a.push(lm.get(i).cada)
+        }
+        return a
+    }
+    function getVeces(){
+        let a = []
+        for(var i=0;i<lm.count; i++){
+            a.push(lm.get(i).veces)
+        }
+        return a
+    }
+    function getAsuntos(){
+        let a = []
+        for(var i=0;i<lm.count; i++){
+            a.push(lm.get(i).asunto)
         }
         return a
     }
@@ -210,8 +254,10 @@ Rectangle {
             //uLogView.showLog(json['items'][i]['item'].hora)
             let h = json['items'][i]['item'].hora
             let a = json['items'][i]['item'].asunto
+            let c = json['items'][i]['item'].cada
+            let v = json['items'][i]['item'].veces
             let e = json['items'][i]['item'].habilitado
-            lm.append(lm.addItem(h, a, e))
+            lm.append(lm.addItem(h, a, c, v, e))
         }
     }
 }
