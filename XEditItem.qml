@@ -14,6 +14,18 @@ Rectangle {
     property alias c: ti4.text
     property alias v: ti5.text
     signal editFinished(string h, string m, string c, string v, string a, int index)
+    signal deleteItem(int index)
+    onVisibleChanged: {
+        if(visible){
+            ti1.focus=true
+        }else{
+            ti1.focus=false
+            ti2.focus=false
+            ti3.focus=false
+            ti4.focus=false
+            ti5.focus=false
+        }
+    }
     Column{
         id: col
         spacing: app.fs
@@ -25,15 +37,24 @@ Rectangle {
         }
         Row{
             spacing: app.fs
+//            UTextInput{
+//                id: ti0
+//                label: 'Prueba Hora:'
+//                width: app.fs*6
+//                regularExp: RegExpValidator{ regExp: /[0-9]{2}/ }
+//                //KeyNavigation.tab: ti2
+//            }
             UTextInput{
                 id: ti1
                 label: 'Hora:'
                 width: app.fs*6
+                KeyNavigation.tab: ti2
             }
             UTextInput{
                 id: ti2
                 label: 'Minuto:'
                 width: app.fs*6
+                KeyNavigation.tab: ti5
             }
         }
         Row{
@@ -46,30 +67,42 @@ Rectangle {
                 id: ti5
                 label: ''
                 width: app.fs*3
+                KeyNavigation.tab: ti4
             }
             UText{
-                text: 'veces cada '
+                text: ti5.text!=='1'?'veces cada ':'vez'
                 anchors.verticalCenter: parent.verticalCenter
             }
             UTextInput{
                 id: ti4
                 label: ''
                 width: app.fs*3
+                visible: ti5.text!=='1'
+                KeyNavigation.tab: ti3
             }
             UText{
                 text: 'segundos'
                 anchors.verticalCenter: parent.verticalCenter
+                visible: ti5.text!=='1'
             }
         }
         UTextInput{
             id: ti3
             label: 'Asunto:'
             width: r.width-app.fs*3
+            KeyNavigation.tab: ti1
         }
         Row{
             spacing: app.fs
             anchors.right: parent.right
             anchors.rightMargin: app.fs*0.5
+            BotonUX{
+                text: 'Eliminar'
+                onClicked: {
+                    r.deleteItem(r.currentIndex)
+                    r.visible=false
+                }
+            }
             BotonUX{
                 text: 'Cancelar'
                 onClicked: {

@@ -118,8 +118,21 @@ Rectangle {
                 anchors.centerIn: parent
                 UText {
                     id: txtHora
-                    text: '<b>Hora:</b> '+hora
+                    text: '<b>Hora</b><br />'+hora
+                    textFormat: Text.RichText
+                    horizontalAlignment: Text.AlignHCenter
                     anchors.verticalCenter: parent.verticalCenter
+                    Component.onCompleted: {
+                        let d0=hora.split(':')
+                        let d1=''+d0[0]+':'
+                        let d2=''+d0[1]
+                        if(d2.length===1){
+                            d1+='0'+d2
+                        }else{
+                            d1+=d2
+                        }
+                        text='<b>Hora</b><br />'+d1
+                    }
                 }
                 UText {
                     id: txtAsunto
@@ -147,7 +160,7 @@ Rectangle {
                 UText {
                     id: txtVecesCada
                     width: contentWidth
-                    text: ''+veces+' veces\ncada '+cada+' segundos'
+                    text: (''+veces)!=='1'?'Repetir\n'+veces+' veces\ncada '+cada+'\nsegundos':'Avisar\nsolo\nuna vez'
                     horizontalAlignment: Text.AlignHCenter
                     anchors.verticalCenter: parent.verticalCenter
                 }
@@ -156,7 +169,7 @@ Rectangle {
                 anchors.fill: parent
                 onClicked: {
                     xEditItem.currentIndex=index
-                    let d0=txtHora.text.split(' ')
+                    let d0=txtHora.text.split('<br />')
                     xEditItem.h=d0[1].split(':')[0]
                     xEditItem.m=d0[1].split(':')[1]
                     xEditItem.a=txtAsunto.text.replace('<b>Asunto:</b> ', '')
@@ -177,14 +190,34 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: app.fs*0.5
         onClicked: {
-                lm.append(lm.addItem('00:0', '', 15, 3, false))
-                xEditItem.currentIndex=lm.count-1
-                xEditItem.visible=true
+            lm.append(lm.addItem('00:0', '', 15, 3, false))
+            xEditItem.currentIndex=lm.count-1
+            xEditItem.visible=true
         }
     }
     XEditItem{
         id: xEditItem
         visible: false
+        onDeleteItem: {
+            let json='{\n"items":[\n'
+            let v=0
+            for(var i=0;i<lm.count; i++){
+                if(i!==index){
+                    if(v!==0)json+=','
+                    json+='{"item":{'
+                    json+='"hora":"'+lm.get(i).hora+'",'
+                    json+='"asunto":"'+lm.get(i).asunto+'",'
+                    json+='"cada":"'+lm.get(i).cada+'",'
+                    json+='"veces":"'+lm.get(i).veces+'",'
+                    json+='"habilitado":'+lm.get(i).habilitado+''
+                    json+='}}\n'
+                    v++
+                }
+            }
+            json+=']\n}'
+            unik.setFile(r.cFileName, json)
+            r.loadFile(r.cFileName)
+        }
         onEditFinished: {
             lm.get(index).hora=h+':'+m
             lm.get(index).asunto=a
@@ -197,8 +230,8 @@ Rectangle {
                 json+='{"item":{'
                 json+='"hora":"'+lm.get(i).hora+'",'
                 json+='"asunto":"'+lm.get(i).asunto+'",'
-                 json+='"cada":"'+lm.get(i).cada+'",'
-                 json+='"veces":"'+lm.get(i).veces+'",'
+                json+='"cada":"'+lm.get(i).cada+'",'
+                json+='"veces":"'+lm.get(i).veces+'",'
                 json+='"habilitado":'+lm.get(i).habilitado+''
                 json+='}}\n'
             }

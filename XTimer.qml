@@ -16,7 +16,11 @@ Item {
                 stop()
                 return
             }
-            unik.speak(r.msg)
+            var d = new Date(Date.now())
+            let h = d.getHours()
+            let m = d.getMinutes()
+            let string = 'Ya son las '+h+' horas y '+m+' minutos.'
+            unik.speak(r.msg+' '+string)
             r.na++
         }
     }

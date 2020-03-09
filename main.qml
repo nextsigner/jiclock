@@ -183,15 +183,21 @@ ApplicationWindow {
             let h = d.getHours()
             let m = d.getMinutes()
             let string = ''+h+':'+m
+            let string2 = 'Ya son las '+h+' horas y '+m+' minutos.'
             if(arrayHoras.indexOf(string)>=0&&numAvisos<numMaxAvisos){
                 let a = arrayAsuntos[arrayHoras.indexOf(string)]
-                let msg='Es la hora : '+h+'  '+m+' minutos.'
+                let msg='Aviso de la hora : '+h+'  '+m+' minutos.'
                 msg+=' '+a
                 let idName='t'+d.getTime()
                 var comp = Qt.createComponent("XTimer.qml")
                 let um='Último mensaje de la hora '+h+':'+m+' minutos: '+a
                 if(app.uMensaje!==um){
-                    var obj = comp.createObject(xTimers, {"msg":msg, "interval":parseInt(arrayCadas[arrayHoras.indexOf(string)] * 1000), "nma": parseInt(arrayVeces[arrayHoras.indexOf(string)]) })
+                    let numVeces = parseInt(arrayVeces[arrayHoras.indexOf(string)])
+                    unik.speak(msg+' '+string2)
+                    if(numVeces>1){
+                        var obj = comp.createObject(xTimers, {"msg":msg, "interval":parseInt(arrayCadas[arrayHoras.indexOf(string)] * 1000), "nma": parseInt(numVeces - 1)})
+                    }
+
                 }
                 app.uMensaje=um
                 /*let qmlCode='import QtQuick 2.0

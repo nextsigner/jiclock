@@ -9,7 +9,13 @@ Item{
     property string label: 'Input: '
     property color fontColor: app.c2
     property int customHeight: -1
+    property RegExpValidator regularExp
     signal seted(string text)
+    onFocusChanged: {
+        if(focus){
+            tiData.focus=true
+        }
+    }
     Row{
         spacing: app.fs*0.5
         Text{
@@ -30,7 +36,7 @@ Item{
                 TextInput{
                     id: tiData
                     font.pixelSize: app.fs
-                    focus: true
+                    //focus: true
                     width: parent.width-app.fs
                     height: app.fs
                     clip: true
@@ -38,7 +44,8 @@ Item{
                     onTextChanged: r.textChanged(text)
                     Keys.onReturnPressed: r.seted(text)
                     color: r.fontColor
+                    validator: r.regularExp
                 }
         }
-    }
+    }    
 }
