@@ -37,24 +37,19 @@ Rectangle {
         }
         Row{
             spacing: app.fs
-//            UTextInput{
-//                id: ti0
-//                label: 'Prueba Hora:'
-//                width: app.fs*6
-//                regularExp: RegExpValidator{ regExp: /[0-9]{2}/ }
-//                //KeyNavigation.tab: ti2
-//            }
             UTextInput{
                 id: ti1
                 label: 'Hora:'
                 width: app.fs*6
                 KeyNavigation.tab: ti2
+                regularExp: RegExpValidator{ regExp: /[0-9]{2}/ }
             }
             UTextInput{
                 id: ti2
                 label: 'Minuto:'
                 width: app.fs*6
                 KeyNavigation.tab: ti5
+                regularExp: RegExpValidator{ regExp: /[0-9]{2}/ }
             }
         }
         Row{
@@ -68,6 +63,7 @@ Rectangle {
                 label: ''
                 width: app.fs*3
                 KeyNavigation.tab: ti4
+                regularExp: RegExpValidator{ regExp: /[0-9]{3}/ }
             }
             UText{
                 text: ti5.text!=='1'?'veces cada ':'vez'
@@ -79,6 +75,7 @@ Rectangle {
                 width: app.fs*3
                 visible: ti5.text!=='1'
                 KeyNavigation.tab: ti3
+                regularExp: RegExpValidator{ regExp: /[0-9]{3}/ }
             }
             UText{
                 text: 'segundos'
