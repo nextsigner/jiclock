@@ -5,6 +5,8 @@ Item{
     width: parent.width
     height: app.fs*2
     property alias text:tiData.text
+    property string dataType: 'text'
+    property alias maximumLength: tiData.maximumLength
     property alias focusTextInput:tiData.focus
     property string label: 'Input: '
     property color fontColor: app.c2
@@ -27,25 +29,36 @@ Item{
             anchors.verticalCenter: parent.verticalCenter
         }
         Rectangle{
-                width: r.width-label.contentWidth-parent.spacing
-                height: r.customHeight===-1?app.fs*2:r.customHeight
-                color: 'transparent'
-                border.width: unikSettings.borderWidth
-                border.color: r.fontColor
-                radius: unikSettings.radius
-                TextInput{
-                    id: tiData
-                    font.pixelSize: app.fs
-                    //focus: true
-                    width: parent.width-app.fs
-                    height: app.fs
-                    clip: true
-                    anchors.centerIn: parent
-                    onTextChanged: r.textChanged(text)
-                    Keys.onReturnPressed: r.seted(text)
-                    color: r.fontColor
-                    validator: r.regularExp
-                }
+            width: r.width-label.contentWidth-parent.spacing
+            height: r.customHeight===-1?app.fs*2:r.customHeight
+            color: 'transparent'
+            border.width: unikSettings.borderWidth
+            border.color: r.fontColor
+            radius: unikSettings.radius
+            TextInput{
+                id: tiData
+                font.pixelSize: app.fs
+                //focus: true
+                width: parent.width-app.fs
+                height: app.fs
+                clip: true
+                anchors.centerIn: parent
+                onTextChanged: r.textChanged(text)
+                Keys.onReturnPressed: r.seted(text)
+                color: r.fontColor
+                validator: r.regularExp
+            }
         }
-    }    
+    }
+    RegExpValidator{
+        id: regExpDataType
+    }
+    Component.onCompleted: {
+        if(r.dataType!=='text'){
+            if(r.dataType==='dd.dd'){
+                regExpDataType.regExp = /^(^([1-9][0-9]{1})[\.]{1}[0-9]{2})|^(^([1-9][0-9]{0})[\.]{1}[0-9]{2})/
+                r.regularExp = regExpDataType
+            }
+        }
+    }
 }
